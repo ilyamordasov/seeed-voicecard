@@ -1,0 +1,87 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "allwinner,sun50i-h618";
+
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            ac108_clock: ac108_clock {
+                compatible = "fixed-clock";
+                #clock-cells = <0>;
+                clock-frequency = <24000000>;
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            ac108_0: ac108@35 {
+                compatible = "x-power,ac108_0";
+                reg = <0x35>;
+                #sound-dai-cells = <0>;
+                data-protocol = <0>;
+                status = "okay";
+                clocks = <&ac108_clock>;
+            };
+
+            ac108_1: ac108@36 {
+                compatible = "x-power,ac108_1";
+                reg = <0x36>;
+                #sound-dai-cells = <0>;
+                data-protocol = <0>;
+                status = "okay";
+                clocks = <&ac108_clock>;
+            };
+
+            wm8960: wm8960@1a {
+                compatible = "wlf,wm8960";
+                reg = <0x1a>;
+                #sound-dai-cells = <0>;
+                status = "okay";
+                clocks = <&ac108_clock>;
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&i2s0>;
+        __overlay__ {
+            status = "okay";
+            pinctrl-names = "default";
+            sound-dai = <&wm8960>, <&ac108_0>, <&ac108_1>;
+        };
+    };
+
+    fragment@3 {
+        target-path = "/";
+        __overlay__ {
+            seeed_4mic_card: seeed_4mic_card {
+                compatible = "simple-audio-card";
+                simple-audio-card,name = "seeed-4mic-voicecard";
+                simple-audio-card,format = "i2s";
+                simple-audio-card,widgets =
+                    "Microphone", "Microphone Array",
+                    "Headphone", "Headphone Jack";
+                simple-audio-card,routing =
+                    "Headphone Jack", "HP_L",
+                    "Headphone Jack", "HP_R";
+
+                simple-audio-card,cpu {
+                    sound-dai = <&i2s0>;
+                };
+
+                simple-audio-card,codec {
+                    sound-dai = <&wm8960>, <&ac108_0>, <&ac108_1>;
+                    system-clock-frequency = <24000000>;
+                };
+            };
+        };
+    };
+};

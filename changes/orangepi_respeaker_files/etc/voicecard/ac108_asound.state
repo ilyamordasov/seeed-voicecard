@@ -1,0 +1,159 @@
+state.SEEED4MICVOICE {
+	control.1 {
+		iface MIXER
+		name 'ADC PGA gain'
+		value 31
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 31'
+		}
+	}
+	control.2 {
+		iface MIXER
+		name 'MIC1 boost gain'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 7'
+		}
+	}
+	control.3 {
+		iface MIXER
+		name 'MIC2 boost gain'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 7'
+		}
+	}
+	control.4 {
+		iface MIXER
+		name 'MIC3 boost gain'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 7'
+		}
+	}
+	control.5 {
+		iface MIXER
+		name 'MIC4 boost gain'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 7'
+		}
+	}
+	control.6 {
+		iface MIXER
+		name 'ADC volume'
+		value 192
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 255'
+		}
+	}
+	control.7 {
+		iface MIXER
+		name 'ADCL volume'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 15'
+		}
+	}
+	control.8 {
+		iface MIXER
+		name 'ADCR volume'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 15'
+		}
+	}
+	control.9 {
+		iface MIXER
+		name 'ADC mixer gain'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 15'
+		}
+	}
+	control.10 {
+		iface MIXER
+		name 'PCM Playback Volume'
+		value.0 190
+		value.1 190
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 255'
+		}
+	}
+	control.11 {
+		iface MIXER
+		name 'Headphone Playback Volume'
+		value.0 120
+		value.1 120
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 127'
+		}
+	}
+	control.12 {
+		iface MIXER
+		name 'Headphone Playback Switch'
+		value.0 true
+		value.1 true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+	control.13 {
+		iface MIXER
+		name 'Speaker Playback Volume'
+		value.0 120
+		value.1 120
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 127'
+		}
+	}
+	control.14 {
+		iface MIXER
+		name 'Speaker Playback Switch'
+		value.0 false
+		value.1 false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+}
