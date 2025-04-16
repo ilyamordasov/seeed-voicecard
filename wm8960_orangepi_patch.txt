@@ -1,0 +1,74 @@
+Для файла WM8960 драйвера необходимо внести следующие изменения:
+
+1. В структуре wm8960_priv добавьте поля для Orange Pi:
+
+struct wm8960_priv {
+    /* ... существующие поля ... */
+    
+    /* Добавление поддержки для Orange Pi */
+    bool is_orangepi;
+    struct clk *mclk; /* для Allwinner H618 */
+};
+
+2. В функции wm8960_probe добавьте инициализацию для Orange Pi:
+
+/* Проверяем платформу */
+priv->is_orangepi = of_machine_is_compatible("allwinner,sun50i-h618") ||
+                    of_machine_is_compatible("allwinner,sun50i-h616");
+
+/* Для Orange Pi Zero 2W */
+if (priv->is_orangepi) {
+    /* Получаем тактовый сигнал */
+    priv->mclk = devm_clk_get(component->dev, "mclk");
+    if (!IS_ERR(priv->mclk)) {
+        /* Устанавливаем нужную частоту */
+        clk_prepare_enable(priv->mclk);
+        clk_set_rate(priv->mclk, 24000000); /* 24MHz MCLK */
+    }
+    
+    /* Настройки кодека для Orange Pi */
+    wm8960_reset(component);
+}
+
+3. В функции wm8960_remove добавьте освобождение ресурсов:
+
+struct wm8960_priv *priv = snd_soc_component_get_drvdata(component);
+
+/* Освобождаем ресурсы Orange Pi */
+if (priv->is_orangepi && !IS_ERR(priv->mclk)) {
+    clk_disable_unprepare(priv->mclk);
+}
+
+4. В функции wm8960_hw_params добавьте поддержку Orange Pi:
+
+struct snd_soc_component *component = dai->component;
+struct wm8960_priv *priv = snd_soc_component_get_drvdata(component);
+
+/* Оптимизация для Orange Pi */
+if (priv->is_orangepi) {
+    /* Фиксированные настройки для Orange Pi */
+    unsigned int iface = snd_soc_component_read(component, WM8960_IFACE1) & 0xfff3;
+    
+    /* Установка I2S формата */
+    iface |= 0x0002;
+    
+    /* Установка формата данных */
+    switch (params_width(params)) {
+    case 16:
+        break;
+    case 20:
+        iface |= 0x0004;
+        break;
+    case 24:
+        iface |= 0x0008;
+        break;
+    case 32:
+        iface |= 0x000c;
+        break;
+    default:
+        return -EINVAL;
+    }
+    
+    snd_soc_component_write(component, WM8960_IFACE1, iface);
+    return 0;
+}

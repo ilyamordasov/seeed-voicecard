@@ -1,0 +1,41 @@
+Для файла AC108 драйвера необходимо добавить следующие блоки кода:
+
+1. Добавьте определение таблицы совместимости с Orange Pi где-нибудь в начале файла, до определения i2c_driver:
+
+/* Коды устройств для Allwinner H618 */
+static const struct of_device_id of_ac108_match[] = {
+    { .compatible = "x-power,ac108_0", },
+    { .compatible = "x-power,ac108_1", },
+    { .compatible = "x-power,ac108_2", },
+    { .compatible = "x-power,ac108_3", },
+    {},
+};
+MODULE_DEVICE_TABLE(of, of_ac108_match);
+
+2. В функции ac108_hw_params (или подобной), добавьте поддержку для платформы Orange Pi:
+
+/* Поддержка для Orange Pi Zero 2W */
+if (of_machine_is_compatible("allwinner,sun50i-h618") ||
+    of_machine_is_compatible("allwinner,sun50i-h616")) {
+    /* Настройки I2S для Allwinner H618 */
+    switch (params_rate(params)) {
+    case 8000:
+    case 16000:
+    case 32000:
+    case 48000:
+        /* Частоты, поддерживаемые H618 */
+        break;
+    default:
+        dev_err(dai->dev, "Неподдерживаемая частота дискретизации: %d\n", 
+                 params_rate(params));
+        return -EINVAL;
+    }
+}
+
+3. В структуре ac108_i2c_driver (или подобной), измените поле .driver, добавив of_match_table:
+
+.driver = {
+    .name = "ac108",
+    .owner = THIS_MODULE,
+    .of_match_table = of_match_ptr(of_ac108_match),
+},

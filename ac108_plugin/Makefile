@@ -19,5 +19,9 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -I/usr/include/alsa -c -o $@ $<
 
+install: $(TARGET)
+	mkdir -p $(LIB_DIR)
+	install -m 644 $(TARGET) $(LIB_DIR)/
+
 clean:
 	rm -f $(OBJS) $(TARGET)
